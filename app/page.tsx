@@ -18,7 +18,7 @@ export default function Home() {
           <a href="#beranda">Beranda</a>
           <a href="#fitur">Fitur</a>
           <a href="#tentang">Tentang Kami</a>
-          <a href="#kontak">Kontrak</a>
+          <a href="#kontak">Kontak</a>
         </nav>
 
         <button className="login-button">↪ &nbsp; Masuk</button>
