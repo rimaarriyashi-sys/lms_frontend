@@ -1,29 +1,282 @@
 "use client";
+
 import { useState } from "react";
-type Role="Admin"|"Guru"|"Siswa"|"Kurikulum"|"Kepsek";
-const menus:Record<Role,string[]>={Admin:["Dashboard","Manajemen Akun","Kelas & Jurusan","Guru & Pelajaran","Data Guru","Data Siswa","Settings"],Guru:["Dashboard","Asesmen","Materi","Tugas & Projek","Nilai","Data Siswa","Settings"],Siswa:["Dashboard","Materi","Tugas","Ujian / Kuis","Projek","Nilai","Settings"],Kurikulum:["Dashboard","Nilai","Tugas","Monitoring Ujian","Guru Pembuat Soal","Data Guru","Settings"],Kepsek:["Dashboard","Nilai","Monitoring Tugas","Monitoring Ujian","Guru Pembuat Soal","Data Guru","Data Siswa","Settings"]};
-const info:Record<Role,string>={Admin:"Kelola sistem dan data sekolah",Guru:"Kelola pembelajaran dan penilaian",Siswa:"Ikuti pembelajaran dan tugas",Kurikulum:"Monitor kegiatan akademik",Kepsek:"Monitor perkembangan sekolah"};
-const stats:Record<Role,string[][]>={Admin:[["Total akun","1.286"],["Total guru","86"],["Total siswa","1.148"],["Total kelas","36"],["Total jurusan","5"],["Mata pelajaran","42"]],Guru:[["Mata pelajaran","4"],["Total siswa","128"],["Tugas aktif","8"],["Asesmen aktif","3"],["Perlu dinilai","24"]],Siswa:[["Total materi","24"],["Tugas aktif","5"],["Ujian mendatang","2"],["Projek aktif","1"],["Nilai terakhir","88"]],Kurikulum:[["Total guru","86"],["Total siswa","1.148"],["Mata pelajaran","42"],["Total kelas","36"],["Tugas aktif","64"],["Ujian aktif","12"]],Kepsek:[["Total guru","86"],["Total siswa","1.148"],["Total kelas","36"],["Mata pelajaran","42"],["Tugas aktif","64"],["Ujian aktif","12"]]};
-const people=[{name:"Andi Pratama",email:"andi.pratama@smk.sch.id",role:"Guru",status:"Aktif",date:"12 Okt 2024"},{name:"Nadia Putri",email:"nadia.putri@smk.sch.id",role:"Siswa",status:"Aktif",date:"10 Okt 2024"},{name:"Rizky Ramadhan",email:"rizky.r@smk.sch.id",role:"Guru",status:"Aktif",date:"08 Okt 2024"},{name:"Siti Aulia",email:"siti.aulia@smk.sch.id",role:"Siswa",status:"Nonaktif",date:"04 Okt 2024"}];
-const tasks=[["Rancang UI aplikasi kasir","Pemrograman Web","XI PPLG 1","18 Okt 2024","Berlangsung"],["Analisis basis data","Basis Data","XI PPLG 2","20 Okt 2024","Berlangsung"],["Laporan praktik jaringan","Jaringan Komputer","X TKJ 1","15 Okt 2024","Segera"]];
-export default function Home(){
- const [view,V]=useState("home"),[role,R]=useState<Role>("Admin"),[page,P]=useState("Dashboard"),[query,Q]=useState(""),[filter,F]=useState("Semua role"),[dialog,D]=useState(""),[toast,T]=useState(""),[mobile,M]=useState(false),[notice,N]=useState(false),[rows,Rows]=useState(people);
- const message=(s:string)=>{T(s);setTimeout(()=>T(""),2400)};
- const enter=(r:Role)=>{R(r);P("Dashboard");V("app");message(`Masuk sebagai ${r}`)};
- const result=rows.filter(x=>`${x.name} ${x.email} ${x.role}`.toLowerCase().includes(query.toLowerCase())&&(filter==="Semua role"||x.role===filter));
- const features=[["01","Manajemen Pembelajaran","Materi, kelas, dan aktivitas belajar terhubung."],["02","Manajemen Tugas","Atur tenggat, pengumpulan, dan penilaian."],["03","Manajemen Akun","Hak akses jelas untuk seluruh warga sekolah."],["04","Manajemen Kelas","Kelola rombel, jurusan, dan guru pengampu."],["05","Monitoring Akademik","Pantau capaian dan aktivitas belajar."]];
- if(view==="home")return <main className="landing"><header className="public-header"><a className="brand" href="#"><i>e</i><b>Edu<span>LMS</span><small>SMK NEGERI 1 NUSANTARA</small></b></a><nav><a href="#beranda">Beranda</a><a href="#fitur">Fitur</a><a href="#tentang">Tentang Kami</a><a href="#kontak">Kontak</a></nav><button className="primary" onClick={()=>V("login")}>Masuk <span>&gt;</span></button></header><section className="hero" id="beranda"><div className="hero-copy"><label className="eyebrow"><i/> RUANG BELAJAR DIGITAL SEKOLAH</label><h1>Belajar lebih terarah.<br/><em>Berkembang</em> bersama.</h1><p>Platform pembelajaran digital untuk menghubungkan siswa, guru, kurikulum, dan manajemen sekolah dalam satu sistem.</p><div className="actions"><button className="primary large" onClick={()=>V("login")}>Masuk ke EduLMS <span>&gt;</span></button><a href="#fitur">Jelajahi fitur â†“</a></div><div className="proof"><span className="avatar">RA</span><span className="avatar">DW</span><span className="avatar">NP</span><span>Digunakan oleh <b>1.200+ siswa</b> aktif&nbsp; Ã‚| &nbsp;2024/2025</span></div></div><div className="hero-art"><div className="glow"/><div className="mock"><aside><i>e</i><b>01</b>02<br/>03<br/>04</aside><div className="mock-body"><small>RABU, 16 OKTOBER 2024</small><h3>Selamat pagi, Nadia</h3><div className="mini-stats"><div>TUGAS AKTIF<strong>05 <i>UP</i></strong><small>2 segera dikumpulkan</small></div><div>NILAI RATA-RATA<strong>88.4 <i>UP</i></strong><small>Naik 4.2 poin</small></div></div><div className="chart"><b>Progres belajar</b><small>Semester ini</small><div className="bars">{[34,50,44,68,60,82,94].map((n,i)=><i key={i} style={{height:n+"%"}}/>)}</div><div className="chart-labels">Agu  Sep  Okt  Nov  Des</div></div><div className="task"><i>UP</i><b>Desain UI aplikasi kasir<small>Pemrograman Web Ã‚| XI PPLG 1</small></b><span>Segera</span></div></div></div><div className="float-note">? <b>Progres diperbarui<small>Nilai baru tersedia</small></b></div><label className="art-caption">SATU SEKOLAH, SATU EKOSISTEM</label></div></section><div className="trust"><span>DIRANCANG UNTUK SELURUH WARGA SEKOLAH</span><b>01 Pembelajaran terarah</b><b>02 Data terhubung</b><b>03 Kemajuan terpantau</b></div><section className="features" id="fitur"><label className="kicker">SATU PLATFORM, BANYAK KEMUNGKINAN</label><div className="section-title"><h2>Semua yang dibutuhkan<br/>sekolah modern.</h2><p>Alur pembelajaran dan pengelolaan akademik yang tersusun dalam satu ruang kerja bersama.</p></div><div className="feature-grid">{features.map((x,i)=><article key={x[1]}><span className="ficon">{x[0]}</span><small>0{i+1}</small><h3>{x[1]}</h3><p>{x[2]}</p></article>)}</div></section><section className="about" id="tentang"><div className="stamp">SMK<br/>01</div><div><label className="kicker">DIBANGUN UNTUK PENDIDIKAN KEJURUAN</label><h2>Belajar hari ini.<br/><em>Siap untuk masa depan.</em></h2></div><p>EduLMS menyatukan pembelajaran berbasis proyek, praktik, dan kompetensi dalam pengalaman yang dekat dengan kebutuhan sekolah kejuruan.</p></section><footer id="kontak"><a className="brand" href="#"><i>e</i><b>Edu<span>LMS</span><small>SMK NEGERI 1 NUSANTARA</small></b></a><span>Ã‚(c) 2024 EduLMS Ã‚| Ruang tumbuh bersama</span><a href="mailto:info@edulms.sch.id">Hubungi sekolah</a></footer></main>;
- if(view==="login")return <main className="auth"><button className="back" onClick={()=>V("home")}>Back | Kembali ke beranda</button><section className="auth-card"><a className="brand"><i>e</i><b>Edu<span>LMS</span><small>SMK NEGERI 1 NUSANTARA</small></b></a><label className="kicker">PORTAL AKADEMIK SEKOLAH</label><h1>Senang melihatmu<br/>kembali.</h1><p>Masuk untuk melanjutkan aktivitas belajar dan akademik.</p><form onSubmit={e=>{e.preventDefault();V("roles")}}><label>Email atau username<input required placeholder="nama@smk.sch.id"/></label><label>Password<input required type="password" placeholder="Masukkan password"/></label><div className="auth-options"><label><input type="checkbox"/> Ingat saya</label><button type="button" onClick={()=>message("Tautan pemulihan dikirim ke email sekolah")}>Lupa password?</button></div><button className="primary full">Masuk <span>&gt;</span></button></form><div className="secure">? Akses aman khusus warga sekolah</div></section><aside className="auth-aside"><label className="kicker">SATU EKOSISTEM SEKOLAH</label><h2>Ruang belajar<br/>yang <em>terhubung.</em></h2><p>Materi, tugas, dan perkembangan akademik dalam satu pengalaman sederhana.</p><div className="orbit">01 Belajar   02 Berkarya   03 Bertumbuh</div><small>EDULMS Ã‚| TAHUN AJARAN 2024/2025</small></aside>{toast&&<div className="toast">{toast}</div>}</main>;
- if(view==="roles")return <main className="roles"><header><a className="brand" onClick={()=>V("home")}><i>e</i><b>Edu<span>LMS</span><small>SMK NEGERI 1 NUSANTARA</small></b></a><button onClick={()=>V("login")}>Back</button></header><section><label className="kicker">SELAMAT DATANG DI EDULMS</label><h1>Masuk sebagai</h1><p>Pilih ruang kerja sesuai peran Anda di sekolah.</p><div className="role-grid">{(["Admin","Guru","Siswa","Kurikulum","Kepsek"] as Role[]).map((r,i)=><button key={r} onClick={()=>enter(r)}><span>{["A","G","S","K","KS"][i]}</span><small>0{i+1}</small><b>{r==="Kepsek"?"Kepala Sekolah":r}</b><p>{info[r]}</p><i>UP</i></button>)}</div><label className="secure">Akses - Tampilan dan fitur menyesuaikan akses setiap peran</label></section></main>;
- const menu=menus[role], dashboard=page==="Dashboard", admin=role==="Admin", student=role==="Siswa";
- const title:Record<string,string>={Dashboard:"Ringkasan","Manajemen Akun":"Manajemen akun","Kelas & Jurusan":"Kelas & jurusan","Guru & Pelajaran":"Guru & pelajaran","Data Guru":"Data guru","Data Siswa":"Data siswa",Asesmen:"Asesmen",Materi:"Materi pembelajaran","Tugas & Projek":"Tugas & projek",Tugas:"Daftar tugas","Ujian / Kuis":"Ujian & kuis",Projek:"Projek kelas",Nilai:"Rekap nilai akademik","Monitoring Ujian":"Monitoring ujian","Monitoring Tugas":"Monitoring tugas","Guru Pembuat Soal":"Guru pembuat soal",Settings:"Pengaturan akun"};
- const accounts=page==="Manajemen Akun";
- const records=accounts?result.map(x=>[x.name,x.email,x.role,x.status,x.date]):page.includes("Siswa")?[["Nadia Putri","2408137","XI PPLG 1","PPLG","Aktif"],["Fajar Maulana","2408138","XI PPLG 1","PPLG","Aktif"],["Alya Safitri","2408139","XI PPLG 2","PPLG","Aktif"]]:page.includes("Guru")?[["Rina Maharani","19870412","Pemrograman Web","XI PPLG 1","Aktif"],["Andi Pratama","19820319","Basis Data","XI PPLG 2","Aktif"],["Dwi Lestari","19891002","Jaringan Komputer","X TKJ 1","Aktif"]]:page.includes("Kelas")?[["XI PPLG 1","XI","PPLG","Rina Maharani","32 siswa"],["XI PPLG 2","XI","PPLG","Andi Pratama","30 siswa"]]:page.includes("Nilai")?[["Pemrograman Web","Rina Maharani","XI PPLG 1","32 siswa","88.4 Ã‚| Baik"],["Basis Data","Andi Pratama","XI PPLG 2","30 siswa","82.7 Ã‚| Baik"]]:page.includes("Ujian")||page.includes("Asesmen")||page.includes("soal")?[["Asesmen UI/UX Dasar","Rina Maharani","Pemrograman Web","XI PPLG 1","20 soal","16 Okt 2024"],["Kuis Basis Data","Andi Pratama","Basis Data","XI PPLG 2","15 soal","15 Okt 2024"]]:page.includes("Materi")?[["Pengenalan UI/UX","Pemrograman Web","Rina Maharani","16 Okt 2024","PDF Ã‚| 2.4 MB","Aktif"],["Normalisasi Basis Data","Basis Data","Andi Pratama","15 Okt 2024","PDF Ã‚| 1.8 MB","Aktif"]]:tasks.map(x=>[x[0],"Rina Maharani",x[1],x[2],x[3],x[4]]);
- let headers=accounts?["Nama","Username / email","Role","Status","Tanggal dibuat"]:page.includes("Siswa")?["Siswa","NIS","Kelas","Jurusan","Status"]:page.includes("Guru")?["Guru","NIP","Mata pelajaran","Kelas","Status"]:page.includes("Kelas")?["Nama kelas","Tingkat","Jurusan","Wali kelas","Jumlah siswa"]:page.includes("Nilai")?["Mata pelajaran","Guru","Kelas","Jumlah siswa","Nilai rata-rata"]:page.includes("Ujian")||page.includes("Asesmen")||page.includes("soal")?["Ujian / asesmen","Guru","Mata pelajaran","Kelas","Jumlah soal"]:page.includes("Materi")?["Materi","Mata pelajaran","Guru","Tanggal","File"]:["Tugas / projek","Guru","Mata pelajaran","Kelas","Deadline"];
- let add=accounts?"Tambah akun":page.includes("Kelas")?"Tambah kelas":page.includes("Pelajaran")?"Tambah pelajaran":page==="Asesmen"?"Buat asesmen":page==="Materi"?"Tambah materi":page.includes("Tugas")||page==="Projek"?"Buat tugas":"Tambah data";
- return <main className="app"><aside className={`sidebar ${mobile?"open":""}`}><a className="brand" onClick={()=>P("Dashboard")}><i>e</i><b>Edu<span>LMS</span><small>SMK NEGERI 1 NUSANTARA</small></b></a><label className="side-label">RUANG KERJA</label><button className="school"><i>N</i><span><b>SMK Negeri 1 Nusantara</b><small>Tahun ajaran 2024/2025</small></span>...</button><label className="side-label">MENU UTAMA</label><nav>{menu.map((m,i)=><button key={m} className={page===m?"active":""} onClick={()=>{P(m);M(false)}}><i>{["?","?","?","?","?","?","?","?","?","?"][i%10]}</i>{m}{m==="Tugas & Projek"&&<small>8</small>}</button>)}</nav><div className="side-bottom"><div className="help"><b>? Butuh bantuan?</b><p>Pusat panduan EduLMS siap membantu.</p><button onClick={()=>message("Panduan EduLMS dibuka")}>Lihat panduan ?</button></div><button className="logout" onClick={()=>D("logout")}>? Keluar</button></div></aside>{mobile&&<button className="scrim" onClick={()=>M(false)}/>}
- <section className="main"><header className="topbar"><button className="hamb" onClick={()=>M(true)}>Menu</button><div className="crumb">EduLMS / {dashboard?"Ruang kerja":page} / <b>{dashboard?"Dashboard":title[page]}</b></div><div className="top-actions"><label className="search">Search <input placeholder="Cari apa saja..." value={query} onChange={e=>Q(e.target.value)}/><kbd>Ctrl K</kbd></label><div className="notice-wrap"><button className="bell" onClick={()=>N(!notice)}>?<i/></button>{notice&&<div className="notices"><b>Notifikasi <small onClick={()=>N(false)}>Tandai dibaca</small></b>{[["Tugas baru ditambahkan","UI Aplikasi Kasir Ã‚| 10 menit lalu"],["Nilai tersedia","Kuis Basis Data Ã‚| 1 jam lalu"],["Pengingat ujian","Besok, pukul 08.00"]].map(x=><p key={x[0]}>? <span><b>{x[0]}</b><small>{x[1]}</small></span></p>)}</div>}</div><i className="divider"/><button className="profile"><i>{role.slice(0,2).toUpperCase()}</i><span><b>{admin?"Dewi Anggraini":role==="Guru"?"Rina Maharani":student?"Nadia Putri":role==="Kurikulum"?"Budi Santoso":"Hadi Saputra"}</b><small>{role}</small></span><select aria-label="Ganti role" value={role} onChange={e=>enter(e.target.value as Role)}>{Object.keys(menus).map(x=><option key={x}>{x}</option>)}</select></button></div></header><div className="content"><div className="page-head"><label>RABU, 16 OKTOBER 2024 Ã‚| SEMESTER GANJIL</label><h1>{dashboard?`Selamat pagi, ${admin?"Administrator":student?"Nadia":role==="Guru"?"Bapak/Ibu Guru":role==="Kurikulum"?"Tim Kurikulum":"Kepala Sekolah"} ?`:title[page]}</h1><p>{dashboard?(admin?"Kelola sistem pembelajaran sekolah dengan mudah.":role==="Guru"?"Terima kasih telah menginspirasi hari ini. Mari lanjutkan aktivitas belajar.":student?"Siap belajar dan berkembang hari ini?":"Pantau aktivitas akademik sekolah melalui EduLMS."):info[role]+" dalam satu ruang kerja terstruktur."}</p></div>
- {dashboard&&<><div className="stats">{stats[role].map((s,i)=><article key={s[0]}><i className={`stat-i i${i%4}`}>{["01","02","03","04","05"][i%5]}</i><span>&gt;</span><small>{s[0]}</small><strong>{s[1]}</strong><label>{i===0?"Aktif tahun ajaran ini":"Semester ganjil 2024/2025"}</label></article>)}</div><div className="dash-grid"><section className="panel"><header><div><h2>{admin?"Aktivitas sistem":student?"Tugas mendatang":role==="Guru"?"Aktivitas pembelajaran":"Monitoring akademik"}</h2><p>Perkembangan terbaru di ruang kerja Anda.</p></div><button onClick={()=>P(student?"Tugas":"Monitoring Tugas")}>Lihat semua ?</button></header>{student?<div className="activity">{tasks.map((t,i)=><div key={t[0]}><i>0{i+1}</i><span><b>{t[0]}</b><small>{t[1]} Ã‚| {t[2]}</small></span><label>{t[3]}<small>{t[4]}</small></label><button onClick={()=>D(t[0])}>...</button></div>)}</div>:<div className="activity">{[["Akun guru baru ditambahkan","Rina Maharani Ã‚| Guru Ã‚| XI PPLG 1","10 mnt lalu","+"],["Kelas baru dibuat","XII PPLG 2 Ã‚| 32 siswa","42 mnt lalu","?"],["Jurusan diperbarui","Teknik Jaringan Komputer","2 jam lalu","?"],["Data siswa diperbarui","Nadia Putri Ã‚| XI PPLG 1","Kemarin","?"]].map((x,i)=><div key={x[0]}><i className={`ic${i}`}>{x[3]}</i><span><b>{x[0]}</b><small>{x[1]}</small></span><label>{x[2]}</label></div>)}</div>}</section><section className="panel chart-panel"><header><div><h2>{admin?"Komposisi pengguna":student?"Progres semester":"Ringkasan akademik"}</h2><p>Performa semester ganjil 2024/2025</p></div><button>Ã‚|Ã‚|Ã‚|</button></header><div className="chart-large"><span>100<br/><br/>75<br/><br/>50<br/><br/>25<br/><br/>0</span><div className="graph"><div className="graph-bars">{[37,54,45,68,61,83,73,94,85,100].map((n,i)=><i key={i} style={{height:n+"%"}}/>)}</div><small>Agu  Sep  Okt  Nov  Des</small></div></div><div className="avg">? Nilai rata-rata <b>84,6 <small>? 4,2%</small></b></div><div className="subjects">{[["Pemrograman Web",88],["Basis Data",83],["Jaringan Komputer",79]].map(x=><div key={x[0]}>{x[0]}<i><b style={{width:x[1]+"%"}}/></i><b>{x[1]}</b></div>)}</div></section></div></>}
- {!dashboard&&<section className="panel table-panel"><div className="toolbar"><div><label className="search table-search">Search <input placeholder="Cari nama, mata pelajaran..." value={query} onChange={e=>Q(e.target.value)}/></label><select value={accounts?filter:undefined} onChange={e=>F(e.target.value)}><option>Semua role</option>{["Admin","Guru","Siswa","Kurikulum","Kepsek"].map(x=><option key={x}>{x}</option>)}</select><select><option>Semua status</option><option>Aktif</option><option>Nonaktif</option></select></div><div><button className="outline" onClick={()=>message("Filter berhasil diterapkan")}>? Filter</button>{(admin||role==="Guru")?<button className="primary" onClick={()=>D("form")}>+ {add}</button>:<button className="outline" onClick={()=>message("Laporan berhasil disiapkan")}>? Unduh laporan</button>}</div></div><div className="table-scroll"><table><thead><tr>{headers.map((h,i)=><th key={i}>{h}</th>)}<th>Aksi</th></tr></thead><tbody>{records.length?records.map((r,i)=><tr key={i}>{r.map((v,j)=><td key={j}>{(j===0&&(accounts||page.includes("Data")))?<b className="person">{v}</b>:(["Aktif","Nonaktif","Berlangsung","Segera","Draft"].includes(v)?<span className={`badge ${v==="Aktif"||v==="Berlangsung"?"green":v==="Segera"?"yellow":"gray"}`}>{v}</span>:v)}</td>)}<td><div className="row-actions"><button title="Detail" onClick={()=>D("detail:"+r[0])}>View</button>{(admin||role==="Guru")&&<><button title="Edit" onClick={()=>D("form")}>Edit</button><button title="Hapus" onClick={()=>D("delete:"+r[0])}>Del</button></>}</div></td></tr>):<tr><td className="empty" colSpan={headers.length+1}><b>Belum ada data</b><p>Data akan muncul setelah terdapat aktivitas pada sistem.</p><button className="primary" onClick={()=>D("form")}>+ Tambah data</button></td></tr>}</tbody></table></div><div className="table-foot"><span>Menampilkan <b>1Ã¢â‚¬â€œ{records.length}</b> dari <b>{records.length}</b> data</span><div><button>&lt;</button><button className="current">1</button><button>2</button><button>3</button><span>Ã¢â‚¬Â¦</span><button>8</button><button>&gt;</button></div></div></section>}
- <footer className="app-foot"><span>Ã‚(c) 2024 EduLMS Ã‚| SMK Negeri 1 Nusantara</span><span>Butuh bantuan? <a href="mailto:info@edulms.sch.id">Hubungi tim IT</a></span></footer></div></section>{toast&&<div className="toast">OK | {toast}</div>}{dialog&&<div className="backdrop" onClick={()=>D("")}><section className="modal" onClick={e=>e.stopPropagation()}><button className="close" onClick={()=>D("")}>Ãƒâ€”</button><i className={dialog.startsWith("delete")?"danger":""}>{dialog.startsWith("delete")?"!":"+"}</i><h2>{dialog.startsWith("delete")?"Hapus data?":dialog.startsWith("detail:")?dialog.slice(7):dialog==="logout"?"Keluar dari EduLMS?":add}</h2><p>{dialog.startsWith("delete")?`Apakah Anda yakin ingin menghapus ${dialog.slice(7)}? Tindakan ini tidak dapat dibatalkan.`:dialog==="logout"?"Anda akan keluar dari ruang kerja.":dialog.startsWith("detail:")?"Informasi ringkas Ã‚| Tahun ajaran 2024/2025 Ã‚| Status aktif":"Lengkapi informasi berikut untuk melanjutkan."}</p>{dialog==="form"&&<div className="form-grid"><label>Nama<input placeholder="Nama lengkap"/></label><label>Username<input placeholder="nama.pengguna"/></label><label>Email<input placeholder="nama@smk.sch.id"/></label><label>Role<select><option>Pilih role</option>{Object.keys(menus).map(x=><option key={x}>{x}</option>)}</select></label><label>Status<select><option>Aktif</option><option>Nonaktif</option></select></label></div>}<div className="modal-actions"><button className="outline" onClick={()=>D("")}>Batal</button><button className={dialog.startsWith("delete")?"red":"primary"} onClick={()=>{if(dialog.startsWith("delete")&&accounts)Rows(rows.filter(x=>x.name!==dialog.slice(7)));if(dialog==="logout"){V("home");P("Dashboard")}else message(dialog.startsWith("delete")?"Data berhasil dihapus":"Data berhasil disimpan");D("")}}>{dialog.startsWith("delete")?"Hapus":dialog==="logout"?"Keluar":dialog.startsWith("detail:")?"Tutup":"Simpan data"}</button></div></section></div>}</main>;
+import LoginModal, { type LoginRole } from "@/components/LoginModal";
+
+const features = [
+  {
+    icon: "📚",
+    title: "Manajemen Materi",
+    description: "Susun dan bagikan materi belajar dalam satu ruang yang mudah diakses.",
+  },
+  {
+    icon: "🧩",
+    title: "Tugas & Projek",
+    description: "Berikan tugas, kumpulkan hasil, dan ikuti progres belajar siswa.",
+  },
+  {
+    icon: "✍️",
+    title: "Ujian Online",
+    description: "Buat kuis dan ujian digital untuk pengalaman evaluasi yang praktis.",
+  },
+  {
+    icon: "📈",
+    title: "Generate Nilai",
+    description: "Rangkum hasil belajar menjadi nilai yang siap ditinjau.",
+  },
+  {
+    icon: "🧑‍🤝‍🧑",
+    title: "Manajemen 5 Role",
+    description: "Hubungkan Admin, Guru, Siswa, Kurikulum, dan Kepsek dalam satu platform.",
+  },
+  {
+    icon: "🔎",
+    title: "Monitoring & Laporan",
+    description: "Pantau aktivitas dan perkembangan akademik dengan lebih terarah.",
+  },
+];
+
+const roles: { id: LoginRole; name: string; description: string }[] = [
+  { id: "admin", name: "Admin", description: "Kelola data dan kebutuhan sekolah." },
+  { id: "guru", name: "Guru", description: "Atur materi, tugas, ujian, dan penilaian." },
+  { id: "siswa", name: "Siswa", description: "Belajar, mengerjakan tugas, dan melihat nilai." },
+  { id: "kurikulum", name: "Kurikulum", description: "Pantau kegiatan dan capaian akademik." },
+  { id: "kepsek", name: "Kepsek", description: "Tinjau gambaran pembelajaran sekolah." },
+];
+
+export default function Home() {
+  const [isLoginOpen, setLoginOpen] = useState(false);
+  const [initialRole, setInitialRole] = useState<LoginRole | undefined>();
+
+  return (
+    <>
+      <header className="sticky top-0 z-40 border-b border-line/80 bg-white/95 backdrop-blur">
+        <div className="mx-auto flex h-[74px] max-w-7xl items-center justify-between px-5 sm:px-8">
+          <a aria-label="EduLMS, beranda" className="flex items-center gap-2.5" href="#beranda">
+            <span className="grid size-10 place-items-center rounded-xl bg-brand text-xl font-bold text-white">e</span>
+            <span className="font-[family-name:var(--font-fraunces)] text-[22px] font-semibold text-ink">EduLMS</span>
+          </a>
+          <nav aria-label="Navigasi utama" className="hidden items-center gap-9 text-sm font-medium text-ink/75 md:flex">
+            <a className="transition hover:text-brand" href="#fitur">Fitur</a>
+            <a className="transition hover:text-brand" href="#statistik">Statistik</a>
+            <a className="transition hover:text-brand" href="#tentang">Tentang Kami</a>
+          </nav>
+          <button
+            className="rounded-lg bg-brand px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+            onClick={() => {
+              setLoginOpen(true);
+              setInitialRole(undefined);
+            }}
+            type="button"
+          >
+            Masuk
+          </button>
+        </div>
+      </header>
+
+      <main>
+        <section className="overflow-hidden" id="beranda">
+          <div className="mx-auto grid max-w-7xl items-center gap-12 px-5 py-16 sm:px-8 sm:py-20 lg:grid-cols-[1fr_0.95fr] lg:gap-16 lg:py-24">
+            <div className="relative z-10">
+              <span className="inline-flex items-center gap-2 rounded-full border border-brand/20 bg-brand/5 px-3.5 py-1.5 text-xs font-semibold text-brand">
+                <span aria-hidden="true" className="size-1.5 rounded-full bg-brand" />
+                Satu platform untuk sekolah yang terus bertumbuh
+              </span>
+              <h1 className="mt-6 max-w-[660px] font-[family-name:var(--font-fraunces)] text-[46px] leading-[1.08] font-medium text-ink sm:text-[60px]">
+                Belajar lebih terarah,
+                <br />
+                <span className="text-brand">bertumbuh bersama.</span>
+              </h1>
+              <p className="mt-6 max-w-xl text-base leading-7 text-muted sm:text-lg sm:leading-8">
+                EduLMS menyatukan materi, tugas, ujian, dan pemantauan akademik agar seluruh ekosistem sekolah dapat bergerak lebih mudah.
+              </p>
+              <div className="mt-8 flex flex-wrap items-center gap-3">
+                <button
+                  className="rounded-lg bg-brand px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+                  onClick={() => {
+                    setLoginOpen(true);
+                    setInitialRole(undefined);
+                  }}
+                  type="button"
+                >
+                  Masuk ke EduLMS <span aria-hidden="true" className="ml-2">→</span>
+                </button>
+                <a className="rounded-lg border border-line px-6 py-3 text-sm font-semibold text-ink transition hover:border-brand/40 hover:bg-surface" href="#fitur">
+                  Jelajahi Fitur
+                </a>
+              </div>
+            </div>
+
+            <div aria-label="Ilustrasi platform EduLMS" className="relative mx-auto aspect-[1.08/1] w-full max-w-[570px]">
+              <div className="absolute inset-[5%_4%_7%_8%] overflow-hidden rounded-[32px] bg-[linear-gradient(145deg,#986B95_0%,#7D587A_54%,#523B51_100%)]">
+                <div aria-hidden="true" className="absolute inset-0 opacity-25" style={{ backgroundImage: "radial-gradient(circle at 1px 1px, white 1px, transparent 0)", backgroundSize: "23px 23px" }} />
+                <div className="absolute left-[12%] top-[14%] h-[66%] w-[76%] rounded-t-[20px] border border-white/40 bg-white/15 p-4 shadow-2xl backdrop-blur-sm sm:p-6">
+                  <div className="flex items-center justify-between border-b border-white/20 pb-4">
+                    <div className="flex items-center gap-2"><span className="size-7 rounded-lg bg-white/80" /><span className="h-2 w-20 rounded-full bg-white/70" /></div>
+                    <span className="size-6 rounded-full bg-white/35" />
+                  </div>
+                  <div className="mt-5 grid grid-cols-3 gap-2.5">
+                    <span className="h-16 rounded-lg bg-white/25 sm:h-20" />
+                    <span className="h-16 rounded-lg bg-white/40 sm:h-20" />
+                    <span className="h-16 rounded-lg bg-white/20 sm:h-20" />
+                  </div>
+                  <div className="mt-4 flex h-[38%] items-end gap-2 rounded-xl bg-white/15 px-4 pb-3">
+                    <span className="h-[38%] flex-1 rounded-t-md bg-white/45" />
+                    <span className="h-[64%] flex-1 rounded-t-md bg-white/65" />
+                    <span className="h-[48%] flex-1 rounded-t-md bg-white/50" />
+                    <span className="h-[82%] flex-1 rounded-t-md bg-white/80" />
+                    <span className="h-[60%] flex-1 rounded-t-md bg-white/55" />
+                    <span className="h-[92%] flex-1 rounded-t-md bg-white/90" />
+                  </div>
+                </div>
+                <div aria-hidden="true" className="absolute bottom-0 left-0 h-1/4 w-full bg-black/10" />
+              </div>
+              <div className="absolute right-0 top-[15%] rounded-xl border border-line bg-white px-4 py-3.5 shadow-[0_14px_40px_-18px_rgba(17,17,17,0.35)] sm:px-5">
+                <p className="text-[11px] font-medium text-muted">Aktivitas belajar</p>
+                <p className="mt-1 text-xl font-bold text-ink">1.240<span className="text-brand">+</span></p>
+                <p className="text-xs text-muted">siswa aktif</p>
+              </div>
+              <div className="absolute bottom-[10%] left-0 rounded-xl border border-line bg-white px-4 py-3.5 shadow-[0_14px_40px_-18px_rgba(17,17,17,0.35)] sm:px-5">
+                <p className="text-[11px] font-medium text-muted">Keterlibatan kelas</p>
+                <p className="mt-1 text-xl font-bold text-ink">92<span className="text-brand">%</span></p>
+                <div className="mt-2 h-1.5 w-28 overflow-hidden rounded-full bg-surface"><div className="h-full w-[92%] rounded-full bg-brand" /></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section aria-label="Statistik EduLMS" className="bg-brand-dark text-white" id="statistik">
+          <div className="mx-auto grid max-w-7xl grid-cols-2 gap-y-9 px-5 py-12 sm:px-8 md:grid-cols-4 md:py-14">
+            {[
+              ["1.240+", "Siswa Aktif"],
+              ["84", "Guru Terdaftar"],
+              ["32", "Mata Pelajaran"],
+              ["48", "Kelas Aktif"],
+            ].map(([value, label]) => (
+              <div className="text-center" key={label}>
+                <p className="font-[family-name:var(--font-fraunces)] text-4xl font-semibold sm:text-5xl">{value}</p>
+                <p className="mt-2 text-sm text-white/75">{label}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="bg-surface/70" id="fitur">
+          <div className="mx-auto max-w-7xl px-5 py-20 sm:px-8 sm:py-24">
+            <div className="max-w-2xl">
+              <span className="text-xs font-bold uppercase tracking-[0.16em] text-brand">Fitur EduLMS</span>
+              <h2 className="mt-3 font-[family-name:var(--font-fraunces)] text-4xl leading-tight font-medium text-ink sm:text-[46px]">Semua kebutuhan belajar, dalam satu tempat.</h2>
+              <p className="mt-4 text-base leading-7 text-muted">Perangkat yang saling terhubung untuk membantu kegiatan belajar mengajar berjalan lebih lancar.</p>
+            </div>
+            <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {features.map((feature) => (
+                <article className="rounded-xl border border-line bg-white p-6 transition hover:border-brand/35" key={feature.title}>
+                  <span aria-hidden="true" className="grid size-12 place-items-center rounded-xl bg-brand/10 text-2xl">{feature.icon}</span>
+                  <h3 className="mt-5 text-lg font-semibold text-ink">{feature.title}</h3>
+                  <p className="mt-2 text-sm leading-6 text-muted">{feature.description}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section id="peran">
+          <div className="mx-auto max-w-7xl px-5 py-20 sm:px-8 sm:py-24">
+            <div className="mx-auto max-w-2xl text-center">
+              <span className="text-xs font-bold uppercase tracking-[0.16em] text-brand">Satu ekosistem</span>
+              <h2 className="mt-3 font-[family-name:var(--font-fraunces)] text-4xl leading-tight font-medium text-ink sm:text-[46px]">Terhubung untuk setiap peran.</h2>
+              <p className="mt-4 text-base leading-7 text-muted">Setiap anggota sekolah mendapat ruang yang sesuai untuk mendukung proses pendidikan.</p>
+            </div>
+            <div className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+              {roles.map((role, index) => (
+                <article className="flex min-h-[210px] flex-col rounded-xl border border-line p-5" key={role.id}>
+                  <span aria-hidden="true" className="grid size-10 place-items-center rounded-full bg-brand/10 font-[family-name:var(--font-fraunces)] text-lg font-semibold text-brand">0{index + 1}</span>
+                  <h3 className="mt-5 text-lg font-semibold text-ink">{role.name}</h3>
+                  <p className="mt-1 flex-1 text-sm leading-5 text-muted">{role.description}</p>
+                  <button
+                    className="mt-5 self-start text-xs font-bold text-brand transition hover:text-brand-dark"
+                    onClick={() => {
+                      setLoginOpen(true);
+                      setInitialRole(role.id);
+                    }}
+                    type="button"
+                  >
+                    Masuk sebagai {role.name} <span aria-hidden="true">→</span>
+                  </button>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="border-y border-line bg-surface/70" id="tentang">
+          <div className="mx-auto grid max-w-7xl gap-8 px-5 py-20 sm:px-8 sm:py-24 md:grid-cols-[0.8fr_1.2fr] md:gap-16">
+            <div>
+              <span className="text-xs font-bold uppercase tracking-[0.16em] text-brand">Tentang EduLMS</span>
+              <h2 className="mt-3 font-[family-name:var(--font-fraunces)] text-4xl leading-tight font-medium text-ink">Dirancang untuk Ekosistem Pendidikan Modern</h2>
+            </div>
+            <div className="space-y-5 text-base leading-7 text-muted">
+              <p>EduLMS membantu sekolah menyatukan berbagai kegiatan akademik ke dalam alur digital yang lebih tertata. Materi, tugas, ujian, dan hasil belajar dapat dikelola dalam satu platform yang mudah digunakan.</p>
+              <p>Dengan ruang yang terhubung untuk setiap peran, guru dapat fokus mendampingi pembelajaran, siswa lebih mudah mengikuti prosesnya, dan sekolah memperoleh gambaran akademik yang lebih menyeluruh.</p>
+            </div>
+          </div>
+        </section>
+
+        <section className="bg-brand-dark text-white">
+          <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-7 px-5 py-14 sm:px-8 md:flex-row md:items-center md:py-16">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.16em] text-white/70">Mulai langkah berikutnya</p>
+              <h2 className="mt-3 max-w-2xl font-[family-name:var(--font-fraunces)] text-3xl leading-tight font-medium sm:text-4xl">Wujudkan pengalaman belajar yang lebih terhubung.</h2>
+            </div>
+            <button
+              className="shrink-0 rounded-lg bg-white px-6 py-3 text-sm font-semibold text-brand-dark transition hover:bg-white/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+              onClick={() => {
+                setLoginOpen(true);
+                setInitialRole(undefined);
+              }}
+              type="button"
+            >
+              Masuk ke EduLMS <span aria-hidden="true" className="ml-2">→</span>
+            </button>
+          </div>
+        </section>
+      </main>
+
+      <footer className="bg-ink text-white">
+        <div className="mx-auto grid max-w-7xl gap-10 px-5 py-12 sm:px-8 md:grid-cols-[1.5fr_1fr_1fr] md:gap-14">
+          <div>
+            <a className="inline-flex items-center gap-2.5" href="#beranda">
+              <span className="grid size-9 place-items-center rounded-lg bg-brand text-lg font-bold">e</span>
+              <span className="font-[family-name:var(--font-fraunces)] text-xl font-semibold">EduLMS</span>
+            </a>
+            <p className="mt-4 max-w-sm text-sm leading-6 text-white/65">Platform pembelajaran digital untuk menghubungkan siswa, guru, dan seluruh ekosistem sekolah.</p>
+          </div>
+          <div>
+            <h2 className="text-sm font-semibold">Jelajahi</h2>
+            <ul className="mt-4 space-y-3 text-sm text-white/65">
+              <li><a className="transition hover:text-white" href="#fitur">Fitur</a></li>
+              <li><a className="transition hover:text-white" href="#statistik">Statistik</a></li>
+              <li><a className="transition hover:text-white" href="#tentang">Tentang Kami</a></li>
+            </ul>
+          </div>
+          <div>
+            <h2 className="text-sm font-semibold">Akses</h2>
+            <ul className="mt-4 space-y-3 text-sm text-white/65">
+              <li><button className="transition hover:text-white" onClick={() => { setLoginOpen(true); setInitialRole(undefined); }} type="button">Masuk ke EduLMS</button></li>
+              <li><a className="transition hover:text-white" href="#peran">Peran Pengguna</a></li>
+            </ul>
+          </div>
+        </div>
+        <div className="border-t border-white/15">
+          <div className="mx-auto max-w-7xl px-5 py-5 text-xs text-white/55 sm:px-8">© 2026 EduLMS. Semua hak dilindungi.</div>
+        </div>
+      </footer>
+
+      <LoginModal
+        isOpen={isLoginOpen}
+        onClose={() => setLoginOpen(false)}
+        initialRole={initialRole}
+      />
+    </>
+  );
 }

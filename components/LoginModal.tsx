@@ -72,6 +72,7 @@ export default function LoginModal({
   );
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [previousProps, setPreviousProps] = useState({ isOpen, initialRole });
@@ -87,6 +88,7 @@ export default function LoginModal({
       setSelectedRole(initialRole ?? null);
       setEmail("");
       setPassword("");
+      setIsPasswordVisible(false);
       setError("");
       setIsSubmitting(false);
     }
@@ -355,16 +357,66 @@ export default function LoginModal({
                 </label>
                 <label className="block text-sm font-medium text-ink">
                   Password
-                  <input
-                    autoComplete="current-password"
-                    className="mt-2 block h-12 w-full rounded-lg border border-line bg-white px-3.5 text-sm text-ink outline-none transition placeholder:text-muted/70 focus:border-brand focus:ring-4 focus:ring-brand/10"
-                    name="password"
-                    onChange={(event) => setPassword(event.target.value)}
-                    placeholder="Masukkan password"
-                    required
-                    type="password"
-                    value={password}
-                  />
+                  <span className="relative mt-2 block">
+                    <input
+                      autoComplete="current-password"
+                      className="block h-12 w-full rounded-lg border border-line bg-white px-3.5 pr-11 text-sm text-ink outline-none transition placeholder:text-muted/70 focus:border-brand focus:ring-4 focus:ring-brand/10"
+                      name="password"
+                      onChange={(event) => setPassword(event.target.value)}
+                      placeholder="Masukkan password"
+                      required
+                      type={isPasswordVisible ? "text" : "password"}
+                      value={password}
+                    />
+                    <button
+                      aria-label={
+                        isPasswordVisible
+                          ? "Sembunyikan password"
+                          : "Tampilkan password"
+                      }
+                      className="absolute inset-y-0 right-0 grid w-11 place-items-center text-muted transition hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-[-4px] focus-visible:outline-brand"
+                      onClick={() =>
+                        setIsPasswordVisible((visible) => !visible)
+                      }
+                      type="button"
+                    >
+                      <svg
+                        aria-hidden="true"
+                        className="size-5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        {isPasswordVisible ? (
+                          <>
+                            <path
+                              d="M2.5 12s3.4-6 9.5-6 9.5 6 9.5 6-3.4 6-9.5 6-9.5-6-9.5-6Z"
+                              stroke="currentColor"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="1.7"
+                            />
+                            <circle
+                              cx="12"
+                              cy="12"
+                              r="2.5"
+                              stroke="currentColor"
+                              strokeWidth="1.7"
+                            />
+                          </>
+                        ) : (
+                          <>
+                            <path
+                              d="m3 3 18 18M10.6 6.2A9.8 9.8 0 0 1 12 6c6.1 0 9.5 6 9.5 6a16 16 0 0 1-3.1 3.5M6.2 6.7C3.8 8.2 2.5 12 2.5 12s3.4 6 9.5 6c1.1 0 2.1-.2 3-.5"
+                              stroke="currentColor"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="1.7"
+                            />
+                          </>
+                        )}
+                      </svg>
+                    </button>
+                  </span>
                 </label>
 
                 {error && (
