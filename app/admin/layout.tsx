@@ -126,7 +126,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
         <div className="mt-auto border-t border-white/15 pt-5">
           <p className="truncate px-3 text-sm font-medium">{userName}</p>
           <p className="mt-1 px-3 text-xs text-white/65">Administrator</p>
-          <button type="button" onClick={handleLogout} className="mt-4 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-white/85 transition-colors hover:bg-white/10 hover:text-white">
+          <button type="button" onClick={handleLogout} className="mt-4 flex w-full items-center gap-3 rounded-lg border border-white/20 px-3 py-2.5 text-sm text-white/85 transition-colors hover:bg-white/10 hover:text-white">
             <svg aria-hidden="true" className="size-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M10 17l5-5-5-5M15 12H3M12 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6" /></svg>
             Keluar
           </button>

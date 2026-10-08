@@ -44,3 +44,11 @@ export async function apiFetch<T>(
 
   return data as T;
 }
+
+export async function apiFetchList<T>(
+  endpoint: string,
+  options: RequestInit = {},
+): Promise<T[]> {
+  const result = await apiFetch<{ data: T[] }>(endpoint, options);
+  return Array.isArray(result?.data) ? result.data : [];
+}

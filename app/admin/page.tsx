@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { apiFetch } from "@/lib/api";
+import { apiFetchList } from "@/lib/api";
 import type { Class, Subject, User } from "@/types";
 
 interface DashboardCounts {
@@ -79,23 +79,23 @@ export default function AdminDashboardPage() {
 
     async function loadDashboard() {
       const [usersResult, classesResult, subjectsResult] = await Promise.allSettled([
-        apiFetch<User[]>("/api/admin/users"),
-        apiFetch<Class[]>("/api/admin/classes"),
-        apiFetch<Subject[]>("/api/subjects"),
+        apiFetchList<User>("/api/admin/users"),
+        apiFetchList<Class>("/api/admin/classes"),
+        apiFetchList<Subject>("/api/subjects"),
       ]);
 
       let fetchFailed = false;
       setCounts({
-        teachers: usersResult.status === "fulfilled" && Array.isArray(usersResult.value)
+        teachers: usersResult.status === "fulfilled"
           ? usersResult.value.filter((user) => user.RoleID === 2).length
           : (fetchFailed = true, 0),
-        students: usersResult.status === "fulfilled" && Array.isArray(usersResult.value)
+        students: usersResult.status === "fulfilled"
           ? usersResult.value.filter((user) => user.RoleID === 3).length
           : (fetchFailed = true, 0),
-        classes: classesResult.status === "fulfilled" && Array.isArray(classesResult.value)
+        classes: classesResult.status === "fulfilled"
           ? classesResult.value.length
           : (fetchFailed = true, 0),
-        subjects: subjectsResult.status === "fulfilled" && Array.isArray(subjectsResult.value)
+        subjects: subjectsResult.status === "fulfilled"
           ? subjectsResult.value.length
           : (fetchFailed = true, 0),
       });
