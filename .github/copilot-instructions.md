@@ -4,6 +4,12 @@
 - Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS v4
 - Backend terpisah: Go (Gin + GORM + SQLite) di http://localhost:8080
 
+## Identitas produk
+- Nama produk: NexaEdu (satu kata, N dan E kapital). JANGAN gunakan nama EduLMS atau EduLearn di mana pun.
+- Logo: kotak rounded berisi huruf "NE" (putih, tebal, font Fraunces) di atas bg-brand, diikuti teks "NexaEdu" dan subteks "LMS Sekolah".
+- Email kontak placeholder: info@nexaedu.id
+- Tagline: platform pembelajaran terpadu untuk sekolah kejuruan
+
 ## Aturan desain (berlaku untuk SEMUA halaman)
 - Warna hanya 3 keluarga: brand #986B95 (+ brand-dark #7D587A), putih (canvas #FFFFFF, surface #F8F7F9), hitam (ink #111111). JANGAN mengubah token di app/globals.css dan JANGAN menambah warna baru. Boleh pakai opacity dari token (bg-brand/10, text-ink/70). Pengecualian fungsional: merah hanya untuk aksi hapus dan pesan error.
 - Tanpa emoji. Ikon SVG inline (stroke 1.7, round). Judul pakai font-[family-name:var(--font-fraunces)].
