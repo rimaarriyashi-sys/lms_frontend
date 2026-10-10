@@ -91,6 +91,7 @@ export default function AdminUsersPage() {
   const [form, setForm] = useState<UserForm>(emptyForm);
   const [formErrors, setFormErrors] = useState<UserFormErrors>({});
   const [isSaving, setIsSaving] = useState(false);
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [deletingUser, setDeletingUser] = useState<User | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -118,6 +119,7 @@ export default function AdminUsersPage() {
     setEditingUser(null);
     setForm(emptyForm);
     setFormErrors({});
+    setIsPasswordVisible(false);
     setIsModalOpen(true);
   }
 
@@ -125,6 +127,7 @@ export default function AdminUsersPage() {
     setEditingUser(user);
     setForm({ name: user.Name, email: user.Email, roleId: String(user.RoleID), password: "" });
     setFormErrors({});
+    setIsPasswordVisible(false);
     setIsModalOpen(true);
   }
 
@@ -374,16 +377,35 @@ export default function AdminUsersPage() {
             </div>
             <div>
               <label className="mb-1.5 block text-sm font-medium text-ink" htmlFor="user-password">Password{editingUser ? " (opsional)" : ""}</label>
-              <input
-                autoComplete="new-password"
-                className="h-11 w-full rounded-lg border border-line px-3 text-sm outline-none transition placeholder:text-muted/70 focus:border-brand focus:ring-2 focus:ring-brand/15"
-                id="user-password"
-                onChange={(event) => setForm((current) => ({ ...current, password: event.target.value }))}
-                placeholder={editingUser ? "Kosongkan jika tidak ingin mengubah password" : "Masukkan password"}
-                required={!editingUser}
-                type="password"
-                value={form.password}
-              />
+              <div className="relative">
+                <input
+                  autoComplete="new-password"
+                  className="h-11 w-full rounded-lg border border-line px-3 pr-11 text-sm outline-none transition placeholder:text-muted/70 focus:border-brand focus:ring-2 focus:ring-brand/15"
+                  id="user-password"
+                  onChange={(event) => setForm((current) => ({ ...current, password: event.target.value }))}
+                  placeholder={editingUser ? "Kosongkan jika tidak ingin mengubah password" : "Masukkan password"}
+                  required={!editingUser}
+                  type={isPasswordVisible ? "text" : "password"}
+                  value={form.password}
+                />
+                <button
+                  aria-label={isPasswordVisible ? "Sembunyikan password" : "Tampilkan password"}
+                  className="absolute inset-y-0 right-0 grid w-11 place-items-center text-muted transition-colors hover:text-brand focus-visible:outline-2 focus-visible:outline-offset-[-4px] focus-visible:outline-brand"
+                  onClick={() => setIsPasswordVisible((visible) => !visible)}
+                  type="button"
+                >
+                  <svg aria-hidden="true" className="size-5" fill="none" viewBox="0 0 24 24">
+                    {isPasswordVisible ? (
+                      <>
+                        <path d="M2.5 12s3.4-6 9.5-6 9.5 6 9.5 6-3.4 6-9.5 6-9.5-6-9.5-6Z" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.7" />
+                        <circle cx="12" cy="12" r="2.5" stroke="currentColor" strokeWidth="1.7" />
+                      </>
+                    ) : (
+                      <path d="m3 3 18 18M10.6 6.2A9.8 9.8 0 0 1 12 6c6.1 0 9.5 6 9.5 6a16 16 0 0 1-3.1 3.5M6.2 6.7C3.8 8.2 2.5 12 2.5 12s3.4 6 9.5 6c1.1 0 2.1-.2 3-.5" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.7" />
+                    )}
+                  </svg>
+                </button>
+              </div>
               {formErrors.password && <p className="mt-1 text-xs text-red-600">{formErrors.password}</p>}
             </div>
             {formErrors.request && <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2.5 text-sm text-red-700" role="alert">{formErrors.request}</p>}
