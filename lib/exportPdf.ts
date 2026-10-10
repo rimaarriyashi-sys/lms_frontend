@@ -24,12 +24,12 @@ export async function exportTablePdf({
   doc.roundedRect(14, 12, 11, 11, 2, 2, "F");
   doc.setTextColor(255, 255, 255);
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(17);
-  doc.text("e", 19.5, 20, { align: "center" });
+  doc.setFontSize(10);
+  doc.text("NE", 19.5, 17.5, { align: "center", baseline: "middle" });
 
   doc.setTextColor(17, 17, 17);
   doc.setFontSize(14);
-  doc.text("EduLMS", 29, 17);
+  doc.text("NexaEdu", 29, 17);
   doc.setFont("helvetica", "normal");
   doc.setFontSize(8.5);
   doc.setTextColor(107, 102, 112);
@@ -45,7 +45,7 @@ export async function exportTablePdf({
   doc.setFont("helvetica", "normal");
   doc.setFontSize(9);
   doc.setTextColor(75, 71, 78);
-  doc.text("EduLMS | Tahun Ajaran 2026/2027", 14, 46);
+  doc.text("NexaEdu | Tahun Ajaran 2026/2027", 14, 46);
   const printedAt = new Intl.DateTimeFormat("id-ID", {
     dateStyle: "long",
     timeStyle: "short",
@@ -65,7 +65,7 @@ export async function exportTablePdf({
       doc.setFont("helvetica", "normal");
       doc.setFontSize(8);
       doc.setTextColor(107, 102, 112);
-      doc.text("© 2026 EduLMS — Dokumen ini digenerate secara otomatis", 14, pageHeight - 9);
+      doc.text("© 2026 NexaEdu — Dokumen ini digenerate secara otomatis", 14, pageHeight - 9);
       doc.text(`Halaman ${data.pageNumber}`, pageWidth - 14, pageHeight - 9, { align: "right" });
     },
   });
@@ -76,7 +76,7 @@ export async function exportTablePdf({
     doc.setFont("helvetica", "normal");
     doc.setFontSize(8);
     doc.setTextColor(107, 102, 112);
-    doc.text("© 2026 EduLMS — Dokumen ini digenerate secara otomatis", 14, pageHeight - 9);
+    doc.text("© 2026 NexaEdu — Dokumen ini digenerate secara otomatis", 14, pageHeight - 9);
     doc.text(`Halaman ${doc.getNumberOfPages()}`, pageWidth - 14, pageHeight - 9, { align: "right" });
   }
   const summaryY = finalY > pageHeight - 24 ? 18 : finalY + 8;

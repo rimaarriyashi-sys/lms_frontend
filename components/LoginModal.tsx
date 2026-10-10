@@ -207,7 +207,7 @@ export default function LoginModal({
               className="font-[family-name:var(--font-fraunces)] text-[32px] leading-tight text-ink sm:text-[38px]"
               id="login-modal-title"
             >
-              Masuk ke EduLMS
+              Masuk ke NexaEdu
             </h2>
             <p className="mt-2 max-w-[390px] text-sm leading-6 text-muted">
               Pilih peran Anda untuk melanjutkan ke ruang kerja.
@@ -288,10 +288,10 @@ export default function LoginModal({
               />
               <div className="relative">
                 <span className="inline-grid size-11 place-items-center rounded-xl border border-white/25 bg-white/10 font-[family-name:var(--font-fraunces)] text-2xl font-semibold">
-                  e
+                  NE
                 </span>
                 <p className="mt-5 text-[10px] font-bold uppercase tracking-[0.18em] text-white/70">
-                  EduLMS / Ruang belajar digital
+                  NexaEdu / Ruang belajar digital
                 </p>
                 <h2 className="mt-4 font-[family-name:var(--font-fraunces)] text-4xl leading-[1.08]">
                   Satu ruang,

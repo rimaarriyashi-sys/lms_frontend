@@ -14,8 +14,8 @@ const publicSans = Public_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "EduLMS - LMS Sekolah SMK",
-  description: "Platform pembelajaran digital untuk menghubungkan siswa, guru, kurikulum, dan manajemen sekolah.",
+  title: "NexaEdu — LMS Sekolah",
+  description: "NexaEdu adalah platform pembelajaran digital untuk menghubungkan siswa, guru, kurikulum, dan manajemen sekolah.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
