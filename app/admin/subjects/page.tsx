@@ -2,7 +2,12 @@
 
 import { useEffect, useState, type FormEvent } from "react";
 import ConfirmDialog from "@/components/admin/ConfirmDialog";
+import EmptyState from "@/components/admin/EmptyState";
 import Modal from "@/components/admin/Modal";
+import PageHeader from "@/components/admin/PageHeader";
+import Pagination from "@/components/admin/Pagination";
+import SearchInput from "@/components/admin/SearchInput";
+import TableSkeleton from "@/components/admin/TableSkeleton";
 import { apiFetch, apiFetchList } from "@/lib/api";
 import type { Subject, User } from "@/types";
 
@@ -29,20 +34,6 @@ function AddIcon() {
   return <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg>;
 }
 
-function SkeletonRows() {
-  return (
-    <div className="animate-pulse space-y-3 p-5" aria-label="Memuat daftar mata pelajaran" role="status">
-      {Array.from({ length: 5 }, (_, index) => (
-        <div key={index} className="grid grid-cols-[1.3fr_1.2fr_0.7fr] items-center gap-5 py-3">
-          <span className="h-4 rounded bg-line" />
-          <span className="h-4 rounded bg-line" />
-          <span className="ml-auto h-8 w-20 rounded bg-line" />
-        </div>
-      ))}
-    </div>
-  );
-}
-
 function getErrorMessage(error: unknown, fallback: string): string {
   return error instanceof Error ? error.message : fallback;
 }
@@ -51,6 +42,7 @@ export default function AdminSubjectsPage() {
   const [subjects, setSubjects] = useState<Subject[]>([]);
   const [teachers, setTeachers] = useState<User[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
   const [pageError, setPageError] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -101,6 +93,9 @@ export default function AdminSubjectsPage() {
     subject.SubjectName.toLocaleLowerCase().includes(normalizedSearch) ||
     (subject.Teacher?.Name ?? "").toLocaleLowerCase().includes(normalizedSearch),
   );
+  const pageCount = Math.max(1, Math.ceil(filteredSubjects.length / 10));
+  const safePage = Math.min(currentPage, pageCount);
+  const visibleSubjects = filteredSubjects.slice((safePage - 1) * 10, safePage * 10);
 
   function openAddModal() {
     setEditingSubject(null);
@@ -173,62 +168,69 @@ export default function AdminSubjectsPage() {
 
   return (
     <div className="mx-auto max-w-[1440px]">
-      <div className="mb-7 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
-        <div>
-          <p className="mb-1 text-sm font-medium text-brand">Administrasi akademik</p>
-          <h2 className="text-2xl font-semibold text-ink font-[family-name:var(--font-fraunces)] sm:text-3xl">Mata Pelajaran</h2>
-          <p className="mt-2 text-sm text-muted">Kelola daftar mata pelajaran sekolah</p>
-        </div>
-        <button
-          className="inline-flex min-h-11 items-center justify-center gap-2 self-start rounded-lg bg-brand px-4 text-sm font-semibold text-white transition hover:bg-brand-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand sm:self-auto"
-          onClick={openAddModal}
-          type="button"
-        >
-          <span className="size-[18px]"><AddIcon /></span>
-          Tambah Mapel
-        </button>
-      </div>
+      <PageHeader
+        actions={(
+          <button
+            className="inline-flex min-h-11 items-center justify-center gap-2 self-start rounded-lg bg-brand px-4 text-sm font-semibold text-white transition hover:bg-brand-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand sm:self-auto"
+            onClick={openAddModal}
+            type="button"
+          >
+            <span className="size-[18px]"><AddIcon /></span>
+            Tambah Mapel
+          </button>
+        )}
+        description="Kelola mata pelajaran dan guru pengampunya."
+        eyebrow="Administrasi akademik"
+        title="Mata Pelajaran"
+      />
 
       {pageError && <p className="mb-5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700" role="alert">{pageError}</p>}
 
-      <section className="overflow-hidden rounded-xl border border-line bg-white shadow-[0_2px_10px_rgba(17,17,17,0.04)]">
+      <section className="overflow-hidden rounded-lg border border-line bg-white">
         <div className="border-b border-line p-4 sm:p-5">
-          <label className="relative block max-w-md">
-            <span className="sr-only">Cari nama mapel atau guru</span>
-            <span className="pointer-events-none absolute left-3 top-1/2 size-[18px] -translate-y-1/2 text-muted"><SearchIcon /></span>
-            <input
-              className="h-11 w-full rounded-lg border border-line bg-white pl-10 pr-3 text-sm text-ink outline-none transition placeholder:text-muted/75 focus:border-brand focus:ring-2 focus:ring-brand/15"
-              onChange={(event) => setSearchTerm(event.target.value)}
-              placeholder="Cari nama mapel atau guru..."
-              type="search"
-              value={searchTerm}
-            />
-          </label>
+          <SearchInput
+            label="Cari nama mapel atau guru"
+            onChange={(value) => {
+              setSearchTerm(value);
+              setCurrentPage(1);
+            }}
+            placeholder="Cari nama mapel atau guru..."
+            value={searchTerm}
+          />
         </div>
 
         {isLoading ? (
-          <SkeletonRows />
+          <div className="p-5"><TableSkeleton columns={3} rows={7} /></div>
         ) : filteredSubjects.length === 0 ? (
-          <div className="flex min-h-56 flex-col items-center justify-center px-6 py-12 text-center">
-            <span className="mb-4 grid size-12 place-items-center rounded-full bg-surface text-muted"><span className="size-6"><SearchIcon /></span></span>
-            <h3 className="text-base font-semibold text-ink">Tidak ada mata pelajaran ditemukan</h3>
-            <p className="mt-1 max-w-sm text-sm text-muted">Coba ubah kata pencarian atau tambahkan mata pelajaran baru.</p>
-          </div>
+          <EmptyState
+            description={searchTerm ? "Coba ubah kata pencarian atau tambahkan mata pelajaran baru." : "Tambahkan mata pelajaran dan pilih guru pengampu untuk mulai."}
+            icon={<span className="size-6"><SearchIcon /></span>}
+            title={searchTerm ? "Tidak ada mata pelajaran ditemukan" : "Belum ada mata pelajaran"}
+          />
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full min-w-[640px] border-collapse text-left">
               <thead className="bg-surface/80">
                 <tr className="text-xs font-semibold uppercase tracking-[0.08em] text-muted">
-                  <th className="px-5 py-3.5">Nama Mata Pelajaran</th>
+                  <th className="px-5 py-3.5">Mata Pelajaran</th>
                   <th className="px-5 py-3.5">Guru Pengampu</th>
                   <th className="px-5 py-3.5 text-right">Aksi</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-line">
-                {filteredSubjects.map((subject) => (
+                {visibleSubjects.map((subject) => (
                   <tr key={subject.ID} className="transition-colors hover:bg-surface/50">
-                    <td className="px-5 py-4 text-sm font-medium text-ink">{subject.SubjectName}</td>
-                    <td className="px-5 py-4 text-sm text-muted">{subject.Teacher?.Name ?? "-"}</td>
+                    <td className="px-5 py-4 text-sm font-semibold text-ink">{subject.SubjectName}</td>
+                    <td className="px-5 py-4">
+                      {subject.Teacher?.Name ? (
+                        <span className="inline-flex items-center gap-2.5 text-sm text-ink">
+                          <span className="grid size-8 shrink-0 place-items-center rounded-full bg-brand/10 text-[10px] font-bold text-brand">
+                            {subject.Teacher.Name.trim().split(/\s+/).slice(0, 2).map((part) => part[0]).join("").toUpperCase()}
+                          </span>
+                          {subject.Teacher.Name}
+                        </span>
+                      ) : <span className="text-sm text-muted">-</span>}
+                    </td>
                     <td className="px-5 py-4">
                       <div className="flex justify-end gap-2">
                         <button aria-label={`Edit mata pelajaran ${subject.SubjectName}`} className="inline-flex size-9 items-center justify-center rounded-lg border border-line text-muted transition hover:border-brand/40 hover:bg-brand/5 hover:text-brand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand" onClick={() => openEditModal(subject)} title="Edit mata pelajaran" type="button">
@@ -246,9 +248,7 @@ export default function AdminSubjectsPage() {
           </div>
         )}
         {!isLoading && filteredSubjects.length > 0 && (
-          <div className="border-t border-line px-5 py-3 text-xs text-muted">
-            Menampilkan {filteredSubjects.length} dari {subjects.length} mata pelajaran
-          </div>
+          <Pagination onPageChange={setCurrentPage} page={safePage} pageSize={10} total={filteredSubjects.length} />
         )}
       </section>
 
