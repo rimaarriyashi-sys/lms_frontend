@@ -19,6 +19,8 @@ export interface Role {
 export interface Major {
   ID: number;
   MajorName: string;
+  HeadTeacherID?: string | null;
+  HeadTeacher?: User;
   CreatedAt?: string;
 }
 

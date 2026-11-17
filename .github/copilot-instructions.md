@@ -44,23 +44,6 @@
 - PUT /api/admin/students/:student_id/class
 - POST /api/admin/import (upload Excel, field form "file")
 
-### Guru (role_id 2)
-- CRUD /api/guru/quizzes, /api/guru/quizzes/:quiz_id/questions
-- GET /api/guru/quizzes/:quiz_id/submissions, GET /api/guru/submissions/:submission_id/answers
-- PUT /api/guru/answers/:answer_id/grade (nilai esai)
-- CRUD /api/guru/materials, CRUD /api/guru/assignments
-- PUT /api/guru/submissions/:submission_id/grade (nilai tugas)
-- POST /api/guru/subjects/:subject_id/generate-grades, GET /api/guru/subjects/:subject_id/grades
-
-### Siswa (role_id 3)
-- GET /api/siswa/quizzes, GET /api/siswa/quizzes/:quiz_id/questions
-- POST /api/siswa/quizzes/:quiz_id/start, POST /api/siswa/submissions/:submission_id/submit
-- GET /api/siswa/submissions/:submission_id/result
-- POST /api/siswa/submit (body: assignment_id, file_url)
-- GET /api/siswa/grades
-
-### Kurikulum & Kepsek (role_id 4 dan 5, read-only)
-- GET /api/viewer/grades, /api/viewer/assignments, /api/viewer/quizzes, /api/viewer/teachers, /api/viewer/students
 
 ### Bersama (semua role yang login)
 - GET /api/subjects, /api/schedules, /api/assignments, /api/materials
@@ -70,3 +53,46 @@
 - Guru: CRUD kuis/soal, CRUD materi, CRUD tugas/projek, generate nilai per mapel
 - Siswa: download materi, mengerjakan tugas, ujian, kuis, projek
 - Kurikulum dan Kepsek: hanya melihat nilai per mapel, tugas dari guru, pembuat soal ulangan, data guru dan siswa
+
+## Area Guru dan Siswa (backend sudah direvisi, ini yang berlaku)
+
+### Gaya respons
+- Body request SELALU snake_case.
+- Respons PascalCase (struct Go langsung): /api/me, /api/guru/teaching, /api/guru/students, /api/materials, /api/assignments, /api/guru/quizzes, /api/guru/quizzes/:id/questions, /api/guru/quizzes/:id/submissions, /api/guru/submissions/:id/answers, /api/subjects.
+- Respons snake_case: /api/guru/assignments/:id/submissions (bagian data dan summary), nilai (generate-grades dan grades), semua /api/siswa/... kecuali yang di atas.
+- Semua daftar dibungkus {"data": [...]}. Gunakan apiFetchList<T> untuk GET daftar dan apiFetch untuk lainnya.
+- Tipe TypeScript Guru/Siswa ada di "@/types/learning". Tipe User, Class, Subject, Major dari "@/types". JANGAN menebak casing field.
+- Next.js 16: pada halaman dinamis dengan "use client", ambil parameter dengan useParams() dari next/navigation. useSearchParams() harus dibungkus Suspense.
+
+### Profil
+- GET /api/me -> { data: User } (PascalCase). Untuk siswa: Class, Class.Major, Class.HomeroomTeacher terisi.
+
+### File
+- uploadFile(file) dan downloadFile(fileUrl, fileName) ada di lib/api.ts. Unduh WAJIB lewat downloadFile (endpoint butuh header Authorization), jangan <a href> langsung ke backend.
+- Maksimal 10 MB. Ekstensi: pdf, doc, docx, ppt, pptx, xls, xlsx, txt, zip, rar, png, jpg, jpeg. Validasi di sisi klien dengan pesan jelas.
+
+### Endpoint Guru (role 2)
+- GET /api/guru/teaching (penugasan mapel+kelas), GET /api/guru/students[?class_id=]
+- Materi: GET /api/materials[?class_id&subject_id]; POST /api/guru/materials {subject_id, class_id, title, description, content_url, file_name}; PUT dan DELETE /api/guru/materials/:id
+- Tugas: GET /api/assignments[?class_id&subject_id]; POST /api/guru/assignments {subject_id, class_id, title, description, type: "tugas"|"projek", deadline (ISO 8601), max_score}; PUT dan DELETE /api/guru/assignments/:id; GET /api/guru/assignments/:id/submissions; PUT /api/guru/submissions/:submission_id/grade {score, feedback}; PUT /api/guru/assignments/:id/publish {published}
+- Kuis: GET /api/guru/quizzes[?class_id&subject_id]; POST /api/guru/quizzes {subject_id, class_id, title, quiz_type: "kuis"|"ujian", is_timed, duration_min, start_time, end_time, result_mode: "hidden"|"after_submit"|"after_publish", show_answer_key}; PUT dan DELETE /api/guru/quizzes/:quiz_id; PUT /api/guru/quizzes/:quiz_id/publish {published}
+- Soal: GET dan POST /api/guru/quizzes/:quiz_id/questions {question_text, question_type: "pilihan_ganda"|"esai", option_a..option_d, correct_option, score}; PUT dan DELETE /api/guru/questions/:question_id
+- Hasil kuis: GET /api/guru/quizzes/:quiz_id/submissions; GET /api/guru/submissions/:submission_id/answers; PUT /api/guru/answers/:answer_id/grade {score, teacher_comment}
+- Nilai: POST /api/guru/subjects/:subject_id/generate-grades {class_id, semester, academic_year, assignment_weight?, quiz_weight?}; GET /api/guru/subjects/:subject_id/grades?class_id&semester&academic_year
+
+### Endpoint Siswa (role 3)
+- GET /api/materials, GET /api/assignments, GET /api/subjects (otomatis hanya data kelas siswa untuk materi dan tugas)
+- POST /api/siswa/submit {assignment_id, file_url, file_name, note}; GET /api/siswa/my-submissions
+- GET /api/siswa/quizzes; POST /api/siswa/quizzes/:quiz_id/start; GET /api/siswa/quizzes/:quiz_id/questions; POST /api/siswa/submissions/:submission_id/submit {answers: [{question_id, selected_option?, essay_answer?}]}; GET /api/siswa/submissions/:submission_id/result; GET /api/siswa/submissions/:submission_id/review
+- Siswa TIDAK punya halaman nilai akhir per mapel.
+
+### Aturan nilai (ditegakkan backend, frontend hanya menampilkan yang dikirim)
+- Nilai tugas tampil ke siswa hanya jika sudah dinilai DAN dipublikasikan guru (score_visible).
+- Skor kuis: result_mode after_submit tampil setelah selesai; after_publish tampil setelah guru mempublikasikan; hidden tidak tampil (result_visible).
+- Kunci jawaban hanya tampil bila correct_option ada di respons review. Jangan pernah menebak atau mengarang kunci jawaban.
+- Kurikulum dan Kepsek hanya melihat (tidak ada tombol ubah).
+
+### Komponen yang dipakai ulang
+- components/admin: Modal, ConfirmDialog, PageHeader, SearchInput, EmptyState, TableSkeleton, Pagination. lib/exportPdf.ts: exportTablePdf.
+- Pola halaman daftar: ikuti app/admin/classes/page.tsx (header, tombol aksi, tabel dalam card, skeleton, empty state).
+- Layout area baru: ikuti app/admin/layout.tsx (sidebar bg-brand 260px, logo NE, proteksi role). Ikon tombol sidebar hanya berubah jadi X saat menu mobile terbuka.

@@ -51,4 +51,34 @@ export async function apiFetchList<T>(
 ): Promise<T[]> {
   const result = await apiFetch<{ data: T[] }>(endpoint, options);
   return Array.isArray(result?.data) ? result.data : [];
+
+}
+
+export async function uploadFile(file: File): Promise<{ file_url: string; file_name: string }> {
+  const formData = new FormData();
+  formData.append("file", file);
+  const result = await apiFetch<{ data: { file_url: string; file_name: string } }>("/api/upload", {
+    method: "POST",
+    body: formData,
+  });
+  return result.data;
+}
+
+export async function downloadFile(fileUrl: string, fileName: string): Promise<void> {
+  const token = typeof window !== "undefined" ? window.localStorage.getItem("token") : null;
+  const response = await fetch(`${API_BASE_URL}${fileUrl}`, {
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+  });
+  if (!response.ok) {
+    throw new Error("File tidak dapat diunduh");
+  }
+  const blob = await response.blob();
+  const objectUrl = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = objectUrl;
+  link.download = fileName || "file";
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(objectUrl);
 }

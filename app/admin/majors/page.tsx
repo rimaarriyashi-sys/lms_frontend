@@ -51,11 +51,13 @@ export default function AdminMajorsPage() {
   const [majors, setMajors] = useState<Major[]>([]);
   const [classes, setClasses] = useState<Class[]>([]);
   const [students, setStudents] = useState<User[]>([]);
+  const [teachers, setTeachers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [pageError, setPageError] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingMajor, setEditingMajor] = useState<Major | null>(null);
   const [majorName, setMajorName] = useState("");
+  const [headTeacherId, setHeadTeacherId] = useState("");
   const [formError, setFormError] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const [deletingMajor, setDeletingMajor] = useState<Major | null>(null);
@@ -76,6 +78,7 @@ export default function AdminMajorsPage() {
     else failures.push(getErrorMessage(classesResult.reason, "Data kelas gagal dimuat."));
     if (usersResult.status === "fulfilled") {
       setStudents(usersResult.value.filter((user) => user.RoleID === 3));
+      setTeachers(usersResult.value.filter((user) => user.RoleID === 2));
     } else {
       failures.push(getErrorMessage(usersResult.reason, "Data siswa gagal dimuat."));
     }
@@ -110,6 +113,7 @@ export default function AdminMajorsPage() {
   function openAddModal() {
     setEditingMajor(null);
     setMajorName("");
+    setHeadTeacherId("");
     setFormError("");
     setIsModalOpen(true);
   }
@@ -117,6 +121,7 @@ export default function AdminMajorsPage() {
   function openEditModal(major: Major) {
     setEditingMajor(major);
     setMajorName(major.MajorName);
+    setHeadTeacherId(major.HeadTeacherID ?? "");
     setFormError("");
     setIsModalOpen(true);
   }
@@ -132,7 +137,10 @@ export default function AdminMajorsPage() {
     setIsSaving(true);
     setFormError("");
     try {
-      const body = JSON.stringify({ major_name: normalizedName });
+      const body = JSON.stringify({
+        major_name: normalizedName,
+        head_teacher_id: headTeacherId || null,
+      });
       if (editingMajor) {
         await apiFetch(`/api/admin/majors/${editingMajor.ID}`, {
           method: "PUT",
@@ -270,6 +278,12 @@ export default function AdminMajorsPage() {
                       {homeroomCount}/{classCount}
                     </p>
                   </div>
+                  <div className="col-span-2 flex items-center justify-between gap-3 border-t border-line pt-3">
+                    <p className="text-xs text-muted">Kepala Program</p>
+                    <p className={`text-right text-sm ${major.HeadTeacher?.Name ? "font-medium text-ink" : "italic text-muted"}`}>
+                      {major.HeadTeacher?.Name ?? "Belum ditentukan"}
+                    </p>
+                  </div>
                 </div>
                 <span className="sr-only">Klik untuk melihat daftar kelas</span>
               </div>
@@ -300,6 +314,22 @@ export default function AdminMajorsPage() {
                 value={majorName}
               />
               {formError && <p className="mt-1.5 text-sm text-red-600" role="alert">{formError}</p>}
+            </div>
+            <div>
+              <label className="mb-1.5 block text-sm font-medium text-ink" htmlFor="major-head-teacher">
+                Kepala Program
+              </label>
+              <select
+                className="h-11 w-full rounded-lg border border-line bg-white px-3 text-sm outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/15"
+                id="major-head-teacher"
+                onChange={(event) => setHeadTeacherId(event.target.value)}
+                value={headTeacherId}
+              >
+                <option value="">Belum ditentukan</option>
+                {teachers.map((teacher) => (
+                  <option key={teacher.ID} value={teacher.ID}>{teacher.Name}</option>
+                ))}
+              </select>
             </div>
             <div className="flex justify-end gap-3 border-t border-line pt-4">
               <button className="min-h-11 rounded-lg border border-line px-4 text-sm font-semibold text-ink transition hover:bg-surface disabled:opacity-60" disabled={isSaving} onClick={() => setIsModalOpen(false)} type="button">
