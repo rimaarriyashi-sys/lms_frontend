@@ -96,3 +96,10 @@
 - components/admin: Modal, ConfirmDialog, PageHeader, SearchInput, EmptyState, TableSkeleton, Pagination. lib/exportPdf.ts: exportTablePdf.
 - Pola halaman daftar: ikuti app/admin/classes/page.tsx (header, tombol aksi, tabel dalam card, skeleton, empty state).
 - Layout area baru: ikuti app/admin/layout.tsx (sidebar bg-brand 260px, logo NE, proteksi role). Ikon tombol sidebar hanya berubah jadi X saat menu mobile terbuka.
+
+### Pembaruan kontrak: petunjuk dan lampiran
+- Assignment (PascalCase) punya AttachmentURL dan AttachmentName. Body POST/PUT /api/guru/assignments menerima attachment_url dan attachment_name (kosong = tanpa lampiran; nilai wajib hasil uploadFile).
+- Quiz punya Instructions, AttachmentURL, AttachmentName; GET /api/guru/quizzes juga mengembalikan QuestionCount dan MaxScore. Body POST/PUT /api/guru/quizzes menerima instructions, attachment_url, attachment_name.
+- Siswa: StudentQuiz memuat instructions, attachment_url, attachment_name; StudentQuizSession.quiz sama.
+- Kuis dan ujian disusun DI DALAM aplikasi (soal dibuat di /guru/quizzes/[id]). Ujian berupa dokumen yang dijawab dengan mengunggah file dibuat sebagai Tugas/Projek dengan lampiran soal.
+- Admin menugaskan guru lewat /api/admin/teaching (POST { teacher_id, subject_id, class_ids }).

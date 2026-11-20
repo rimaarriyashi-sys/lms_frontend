@@ -35,6 +35,8 @@ export interface AssignmentItem {
   MaxScore: number;
   GradesPublished?: boolean;
   CreatedAt?: string;
+  AttachmentURL?: string;
+  AttachmentName?: string;
 }
 
 export interface QuizItem {
@@ -53,6 +55,11 @@ export interface QuizItem {
   ResultsPublished: boolean;
   ShowAnswerKey: boolean;
   CreatedAt?: string;
+  Instructions?: string;
+  AttachmentURL?: string;
+  AttachmentName?: string;
+  QuestionCount?: number;
+  MaxScore?: number;
 }
 
 export interface QuestionItem {
@@ -180,6 +187,9 @@ export interface StudentQuiz {
   submission_id: number | null;
   submission_status: "belum" | "mengerjakan" | "selesai";
   result_visible: boolean;
+  instructions: string;
+  attachment_url: string;
+  attachment_name: string;
 }
 
 export interface StudentQuestion {
@@ -203,6 +213,9 @@ export interface StudentQuizSession {
     is_timed: boolean;
     duration_min: number;
     end_time: string;
+    instructions: string;
+    attachment_url: string;
+    attachment_name: string;
   };
 }
 

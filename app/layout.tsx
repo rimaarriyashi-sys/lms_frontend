@@ -21,9 +21,10 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
-      lang="id"
-      className={`${fraunces.variable} ${publicSans.variable} h-full antialiased`}
-    >
+  lang="id"
+  data-scroll-behavior="smooth"
+  className={`${fraunces.variable} ${publicSans.variable} h-full antialiased`}
+>
       <body className="min-h-full flex flex-col font-[family-name:var(--font-body)]">
         {children}
       </body>
